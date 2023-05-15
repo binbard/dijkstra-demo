@@ -13,12 +13,19 @@
         <h3>DIJKSTRA DEMO</h3>
     </center>
     <div class="container">
-        <div class="world"></div>
+        <div class="world">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+                <defs>
+                  <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+                  refX="20" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" />
+                  </marker>
+                </defs>
+              </svg>              
+        </div>
     </div>
     <div class="info"></div>
     <div class="edgeList"></div>
-    <svg id="line"></svg>
-
 
     <script src="./script.js"></script>
 </body>

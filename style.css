@@ -25,6 +25,7 @@
     height: 20px;
     position: absolute;
     text-align: center;
+    cursor: cell;
 }
 
 .info {
@@ -35,7 +36,7 @@
 
 .edgeList {
     position: absolute;
-    top: 45vh;
+    top: 50vh;
     left: 80vw;
 }
 

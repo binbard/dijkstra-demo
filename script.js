@@ -1,16 +1,29 @@
 const docWorld = document.querySelector('.world');
-const docInfo = document.querySelector(".info")
-const docEdgeList = document.querySelector(".edgeList")
+const docInfo = document.querySelector(".info");
+const docEdgeList = document.querySelector(".edgeList");
 
 var vertices = [];
 var edges = [];
 var snode = null;
 var dnode = null;
+var bi = 1;
+
+const biCheck = document.createElement('input');
+biCheck.type = "checkbox";
+biCheck.id = "biCheck";
+biCheck.checked = bi;
+
+const svgContainer = document.querySelector('svg');
+
 
 function setMsg(m) {
     msg = "Selected: " + (snode !== null ? snode.id : null) + "<br>Destination: " + (dnode !== null ? dnode.id : null) + "<br><br>";
-    if (m) msg += m;
     docInfo.innerHTML = msg;
+    docInfo.appendChild(biCheck);
+    biCheck.addEventListener('change', function () {
+        bi = this.checked;
+    });
+    if (m) docInfo.innerHTML += "<br>" + m;
 }
 
 function addEdge() {
@@ -19,19 +32,37 @@ function addEdge() {
         setMsg("INVALID");
         return;
     }
-    else if(snode === dnode){
+    else if (snode === dnode) {
         setMsg("SRC DST CANNOT BE SAME");
         return;
     }
     for (let i = 0; i < edges.length; i++) {
         let edge = edges[i];
-        if ((edge[0] == snode && edge[1] == dnode) || (edge[0] == dnode && edge[1] == snode)) {
+        if (edge[0] === snode && edge[1] === dnode) {
             setMsg("EDGE ALREADY EXISTS");
             return;
         }
     }
+    setMsg("EDGE ADDED");
     edges.push([snode, dnode]);
-    docEdgeList.innerHTML += edges[edges.length - 1][0].id + " -> " + edges[edges.length - 1][1].id + "<br>";
+    if (bi) edges.push([dnode, snode]);
+
+    
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    let elsx = snode.offsetLeft - docWorld.offsetLeft + 10;
+    let elsy = snode.offsetTop - docWorld.offsetTop + 10;
+    let eldx = dnode.offsetLeft - docWorld.offsetLeft + 10;
+    let eldy = dnode.offsetTop - docWorld.offsetTop + 10;
+    line.setAttribute("x1", (elsx));
+    line.setAttribute("y1", (elsy));
+    line.setAttribute("x2", (eldx));
+    line.setAttribute("y2", (eldy));
+    line.setAttribute("stroke", "black");
+    line.setAttribute("marker-end", "url(#arrowhead)");
+
+    svgContainer.appendChild(line);
+
+    docEdgeList.innerHTML += edges[edges.length - 1][0].id + (bi ? " ⇌ " : " ➔ ") + edges[edges.length - 1][1].id + "<br>";
 }
 
 setMsg(snode, dnode);
@@ -56,37 +87,11 @@ docWorld.addEventListener('click', function (e) {
 function addVertex(e) {
     const V = document.createElement('div');
     V.classList.add('vertex');
-    V.style.top = e.pageY + 'px';
-    V.style.left = e.pageX + 'px';
+    V.style.top = e.pageY - 16 + 'px';
+    V.style.left = e.pageX - 16 + 'px';
     V.id = "node" + vertices.length;
     V.innerHTML = vertices.length;
     docWorld.appendChild(V);
     vertices.push(V);
     return V;
-}
-
-function connectVertices() {
-    var vertex1 = snode;
-    var vertex2 = dnode;
-    // console.log(vertex1, vertex2);
-    if (vertex1 === null || vertex2 === null) return;
-
-    const svg = document.getElementById('line');
-    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-
-    const vertex1Rect = vertex1.getBoundingClientRect();
-    const vertex2Rect = vertex2.getBoundingClientRect();
-
-    const vertex1X = vertex1Rect.left + vertex1Rect.width / 2;
-    const vertex1Y = vertex1Rect.top + vertex1Rect.height / 2;
-    const vertex2X = vertex2Rect.left + vertex2Rect.width / 2;
-    const vertex2Y = vertex2Rect.top + vertex2Rect.height / 2;
-
-    line.setAttribute('x1', vertex1X);
-    line.setAttribute('y1', vertex1Y);
-    line.setAttribute('x2', vertex2X);
-    line.setAttribute('y2', vertex2Y);
-    line.classList.add('line');
-
-    svg.appendChild(line);
 }
