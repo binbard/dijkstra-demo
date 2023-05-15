@@ -6,7 +6,7 @@ var vertices = [];
 var edges = [];
 var snode = null;
 var dnode = null;
-var bi = 1;
+var bi = 0;
 
 const biCheck = document.createElement('input');
 biCheck.type = "checkbox";
@@ -47,18 +47,19 @@ function addEdge() {
     edges.push([snode, dnode]);
     if (bi) edges.push([dnode, snode]);
 
-    
+
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-    let elsx = snode.offsetLeft - docWorld.offsetLeft + 10;
-    let elsy = snode.offsetTop - docWorld.offsetTop + 10;
-    let eldx = dnode.offsetLeft - docWorld.offsetLeft + 10;
-    let eldy = dnode.offsetTop - docWorld.offsetTop + 10;
+    let elsx = snode.offsetLeft + 10;
+    let elsy = snode.offsetTop + 10;
+    let eldx = dnode.offsetLeft + 10;
+    let eldy = dnode.offsetTop + 10;
     line.setAttribute("x1", (elsx));
     line.setAttribute("y1", (elsy));
     line.setAttribute("x2", (eldx));
     line.setAttribute("y2", (eldy));
     line.setAttribute("stroke", "black");
-    line.setAttribute("marker-end", "url(#arrowhead)");
+    line.setAttribute("marker-end", "url(#endarrowhead)");
+    if (bi) line.setAttribute("marker-start", "url(#startarrowhead)");
 
     svgContainer.appendChild(line);
 
@@ -87,11 +88,13 @@ docWorld.addEventListener('click', function (e) {
 function addVertex(e) {
     const V = document.createElement('div');
     V.classList.add('vertex');
-    V.style.top = e.pageY - 16 + 'px';
-    V.style.left = e.pageX - 16 + 'px';
+    V.style.top = e.pageY - docWorld.offsetTop - 16 + 'px';
+    V.style.left = e.pageX - docWorld.offsetLeft - 16 + 'px';
     V.id = "node" + vertices.length;
     V.innerHTML = vertices.length;
     docWorld.appendChild(V);
     vertices.push(V);
     return V;
 }
+
+
