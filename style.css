@@ -1,0 +1,51 @@
+.container {
+    display: flex;
+    justify-content: center;
+}
+
+.world {
+    border: 2px solid #2f59d8;
+    width: 50vw;
+    height: 80vh;
+}
+
+@media screen and (max-width: 767px) {
+    .world {
+        border: 2px solid #2f59d8;
+        width: 100vw;
+        height: 60vh;
+    }
+}
+
+.vertex {
+    background-color: #0a0abc;
+    color: #fff;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    text-align: center;
+}
+
+.info {
+    position: absolute;
+    top: 30vh;
+    left: 80vw;
+}
+
+.edgeList {
+    position: absolute;
+    top: 45vh;
+    left: 80vw;
+}
+
+@media screen and (max-width: 767px) {
+    .info {
+        position: static;
+        padding: 50px;
+    }
+    .edgeList {
+        position: static;
+        padding-left: 50px;
+    }
+}
