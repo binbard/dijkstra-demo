@@ -2,8 +2,8 @@ const docWorld = document.querySelector('.world');
 const docInfo = document.querySelector(".info");
 const docEdgeList = document.querySelector(".edgeList");
 
-var vertices = [];
 var edges = [];
+var adj = [];
 var snode = null;
 var dnode = null;
 var startNode = null;
@@ -17,8 +17,8 @@ const biCheck = document.querySelector('#biCheck');
 const selectSe = document.querySelector('#selectSe');
 const btnDij = document.querySelector('#btnDij');
 
-function setBi(){
-    bi=!bi;
+function setBi() {
+    bi = !bi;
 }
 
 function setMsg(m) {
@@ -53,8 +53,15 @@ function addEdge() {
     }
     setMsg("EDGE ADDED");
     edges.push([snode, dnode]);
-    if (bi) edges.push([dnode, snode]);
-
+    let u = parseInt(snode.id.slice(4));
+    let v = parseInt(dnode.id.slice(4));
+    if (adj[u] === undefined) adj[u] = [];
+    if (adj[v] === undefined) adj[v] = [];
+    adj[u].push([v, 0]);
+    if (bi) {
+        adj[v].push([u, 0]);
+        edges.push([dnode, snode]);
+    }
 
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     let elsx = snode.offsetLeft + 10;
@@ -68,7 +75,10 @@ function addEdge() {
     line.setAttribute("stroke", "black");
     line.setAttribute("marker-end", "url(#endarrowhead)");
     line.style.cursor = "crosshair";
-    if (bi) line.setAttribute("marker-start", "url(#startarrowhead)");
+    if (bi) {
+        line.setAttribute("marker-start", "url(#startarrowhead)");
+        line.classList.add("bi");
+    }
     svgContainer.appendChild(line);
 
     const cost = document.createElementNS("http://www.w3.org/2000/svg", "text");
@@ -76,10 +86,10 @@ function addEdge() {
     cost.setAttribute("y", (elsy + eldy) / 2);
     cost.setAttribute("dominant-baseline", "middle");
     cost.classList.add("cost");
-    cost.id = "edge" + edges.length;
+    cost.id = "edge" + snode.id.slice(4) + '-' + dnode.id.slice(4);
     cost.innerHTML = "0";
+    if(bi) cost.classList.add("bi");
     svgContainer.appendChild(cost);
-
     docEdgeList.innerHTML += edges[edges.length - 1][0].id + (bi ? " ⇌ " : " ➔ ") + edges[edges.length - 1][1].id + "<br>";
 }
 
@@ -92,7 +102,7 @@ docWorld.addEventListener('click', function (e) {
         handleCostClick(e);
         return;
     }
-    else if(pt.classList.contains('vertex') && se===true){
+    else if (pt.classList.contains('vertex') && se === true) {
         handleSe(pt);
         return;
     }
@@ -100,8 +110,8 @@ docWorld.addEventListener('click', function (e) {
 
 });
 
-function selectStartEnd(){
-    if(startNode!==null && endNode!==null){
+function selectStartEnd() {
+    if (startNode !== null && endNode !== null) {
         startNode.style.backgroundColor = "#0a0abc";
         endNode.style.backgroundColor = "#0a0abc";
         startNode = null;
@@ -110,26 +120,42 @@ function selectStartEnd(){
     se = !se;
 }
 
-function handleSe(pt){
-    if(startNode===null){
+function handleSe(pt) {
+    if (startNode === null) {
         startNode = pt;
         startNode.style.backgroundColor = "green";
         setMsg("START SELECTED")
     }
-    else if(endNode===null){
+    else if (endNode === null) {
         endNode = pt;
         endNode.style.backgroundColor = "red";
         setMsg("END SELECTED")
         se = false;
-        // TODO
+        startDij();
     }
     console.log("handleSe");
 }
 
+function editCost(u, v, cost) {
+    for (let i = 0; i < adj[u].length; i++) {
+        if (adj[u][i][0] === v) {
+            adj[u][i][1] = cost;
+            console.log(adj);
+            return;
+        }
+    }
+}
+
 function handleCostClick(e) {
     let pt = e.target;
-    let cost = prompt("Enter Cost");
+    let cost = prompt("Enter Cost", 0);
     if (cost === null) return;
+    let vs = pt.id.slice(4).split("-");
+    let u = parseInt(vs[0]);
+    let v = parseInt(vs[1]);
+    cost = parseInt(cost);
+    editCost(u, v, cost);
+    if (pt.classList.contains('bi')) editCost(v, u, cost);
     pt.innerHTML = cost;
 }
 
@@ -154,11 +180,78 @@ function addVertex(e) {
     V.classList.add('vertex');
     V.style.top = e.pageY - docWorld.offsetTop - 16 + 'px';
     V.style.left = e.pageX - docWorld.offsetLeft - 16 + 'px';
-    V.id = "node" + vertices.length;
-    V.innerHTML = vertices.length;
+    V.id = "node" + adj.length;
+    V.innerHTML = adj.length;
     docWorld.appendChild(V);
-    vertices.push(V);
+    if (adj[adj.length] === undefined) adj[adj.length] = [];
     return V;
 }
 
 
+class PriorityQueue {
+    constructor() {
+        this.queue = [];
+    }
+
+    push(priority, value) {
+        this.queue.push([priority, value]);
+        this.queue.sort((a, b) => a[0] - b[0]);
+    }
+
+    pop() {
+        return this.queue.shift();
+    }
+
+    empty() {
+        return this.queue.length === 0;
+    }
+}
+
+
+function colorEdge(u, v) {
+    let edge = document.getElementById("edge" + u + '-' + v);
+    if (edge === null) edge = document.getElementById("edge" + v + '-' + u);
+    if (edge === null) return;   // While testing, edge not exist
+    edge.style.stroke = "red";
+}
+
+function startDij() {
+    const pq = new PriorityQueue();
+    const dist = new Array(adj.length).fill(Number.MAX_SAFE_INTEGER);
+    const parent = new Array(adj.length).fill(-1);
+
+    dist[startNode] = 0;
+    pq.push(0, startNode);
+
+    console.log(adj);
+
+    while (!pq.empty()) {
+        const [_, u] = pq.pop();
+        console.log(u);
+        for (const [v, w] of adj[u]) {
+            if (dist[v] > dist[u] + w) {
+                dist[v] = dist[u] + w;
+                parent[v] = u;
+                pq.push(dist[v], v);
+            }
+        }
+    }
+    for (let i = 1; i < adj.length; i++) {
+        console.log(parent[i], i, dist[i]);
+        colorEdge(parent[i], i);
+        if (i == endNode) break;
+    }
+    console.log(dist.slice(1));
+
+}
+
+// startNode = 0;
+// endNode = 4;
+// adj = [
+//     [[1,5],[2,7]],
+//     [[0,5],[2,6],[3,3]],
+//     [[0,7],[1,6],[4,9]],
+//     [[1,3],[4,2]],
+//     [[2,9],[3,2]]
+// ]
+// startDij();
