@@ -29,9 +29,19 @@
     cursor: cell;
 }
 
+.cost{
+    width: 25px;
+    height: 25px;
+    text-align: center;
+    font-size: 20px;
+    fill: black;
+    text-anchor: middle;
+    cursor: text;
+}
+
 .info {
     position: absolute;
-    top: 30vh;
+    top: 20vh;
     left: 80vw;
 }
 
@@ -41,7 +51,18 @@
     left: 80vw;
 }
 
-@media screen and (max-width: 767px) {
+#selectSe{
+    margin-bottom: 20px;
+}
+
+#btnDij{
+    margin: 10px;
+    background-color: #2f59d8;
+    color: #fff;
+    cursor: pointer;
+}
+
+@media screen and (max-width: 992px) {
     .info {
         position: static;
         padding: 50px;

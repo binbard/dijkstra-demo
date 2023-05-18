@@ -3,7 +3,7 @@
 
 <head>
     <title>DIJ</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" maximum-scale=1.0; user-scalable=0;” >
     <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -28,6 +28,11 @@
     </div>
     <div class="info"></div>
     <div class="edgeList"></div>
+    <div id="insec">
+        <input type="checkbox" id="biCheck" onchange="setBi()">
+        <button id="selectSe" onclick="selectStartEnd()">Select Start</button>
+        <button id="btnDij" onclick="startDij()">DIJ</button>
+    </div>
 
     <script src="./script.js"></script>
 </body>
