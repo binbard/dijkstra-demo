@@ -14,6 +14,7 @@ var bi = true;
 const svgContainer = document.querySelector('svg')
 
 const biCheck = document.querySelector('#biCheck');
+const fillRndCost = document.querySelector('#fillRndCost');
 const selectSe = document.querySelector('#selectSe');
 const btnDij = document.querySelector('#btnDij');
 
@@ -26,6 +27,7 @@ function setMsg(m) {
     msg += "Start: " + (startNode !== null ? startNode.id : null) + "<br>End: " + (endNode !== null ? endNode.id : null) + "<br><br>";
     docInfo.innerHTML = msg;
     docInfo.appendChild(biCheck);
+    docInfo.appendChild(fillRndCost);
     selectSe.innerHTML = "Start End";
 
     docInfo.appendChild(selectSe);
@@ -136,7 +138,7 @@ function handleSe(pt) {
 
 function editCost(u, v, cost) {
     for (let i = 0; i < adj[u].length; i++) {
-        if (adj[u][i][0] === v) {
+        if (adj[u][i][0] == v) {
             adj[u][i][1] = cost;
             return;
         }
@@ -207,6 +209,22 @@ function removeColorOfEdges() {
         let edge = getEdgeOfVertices(u, v);
         edge.classList.remove('colorEdge');
         edge.style.stroke = "black";
+    }
+}
+
+function fillRandomCost(){
+    for(let edgeuv of edges){
+        let u = edgeuv[0].id.slice(4);
+        let v = edgeuv[1].id.slice(4);
+        let cost = Math.floor(Math.random() * 100);
+        let edge = getEdgeOfVertices(u, v);
+        if(edge===null) continue;
+        edge.innerHTML = cost;
+        if(edge.classList.contains('bi')){
+            console.log("bi");
+            editCost(v, u, cost);
+        }
+        editCost(u, v, cost);
     }
 }
 
