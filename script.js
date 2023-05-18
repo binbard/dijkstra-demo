@@ -88,7 +88,7 @@ function addEdge() {
     cost.classList.add("cost");
     cost.id = "edge" + snode.id.slice(4) + '-' + dnode.id.slice(4);
     cost.innerHTML = "0";
-    if(bi) cost.classList.add("bi");
+    if (bi) cost.classList.add("bi");
     svgContainer.appendChild(cost);
     docEdgeList.innerHTML += edges[edges.length - 1][0].id + (bi ? " ⇌ " : " ➔ ") + edges[edges.length - 1][1].id + "<br>";
 }
@@ -111,9 +111,9 @@ docWorld.addEventListener('click', function (e) {
 });
 
 function selectStartEnd() {
-    if (startNode !== null && endNode !== null) {
-        startNode.style.backgroundColor = "#0a0abc";
-        endNode.style.backgroundColor = "#0a0abc";
+    if (startNode != null && endNode != null) {
+        startNode.classList.remove('colorEdge');
+        endNode.classList.remove('colorEdge');
         startNode = null;
         endNode = null;
     }
@@ -123,24 +123,21 @@ function selectStartEnd() {
 function handleSe(pt) {
     if (startNode === null) {
         startNode = pt;
-        startNode.style.backgroundColor = "green";
+        startNode.classList.add('colorEdge')
         setMsg("START SELECTED")
     }
     else if (endNode === null) {
         endNode = pt;
-        endNode.style.backgroundColor = "red";
+        endNode.classList.add('colorEdge')
         setMsg("END SELECTED")
         se = false;
-        startDij();
     }
-    console.log("handleSe");
 }
 
 function editCost(u, v, cost) {
     for (let i = 0; i < adj[u].length; i++) {
         if (adj[u][i][0] === v) {
             adj[u][i][1] = cost;
-            console.log(adj);
             return;
         }
     }
@@ -220,14 +217,22 @@ function startDij() {
     const dist = new Array(adj.length).fill(Number.MAX_SAFE_INTEGER);
     const parent = new Array(adj.length).fill(-1);
 
-    dist[startNode] = 0;
-    pq.push(0, startNode);
+    if (startNode == null) {
+        start = 0;
+        end = dist.length-1;
+        console.info("Start End not set, setting to ", start, end);
+    } else {
+        start = parseInt(startNode.id.slice(4)) || 0;
+        end = parseInt(endNode.id.slice(4)) || 10;
+    }
+
+    dist[start] = 0;
+    pq.push(0, start);
 
     console.log(adj);
 
     while (!pq.empty()) {
         const [_, u] = pq.pop();
-        console.log(u);
         for (const [v, w] of adj[u]) {
             if (dist[v] > dist[u] + w) {
                 dist[v] = dist[u] + w;
@@ -239,14 +244,15 @@ function startDij() {
     for (let i = 1; i < adj.length; i++) {
         console.log(parent[i], i, dist[i]);
         colorEdge(parent[i], i);
-        if (i == endNode) break;
+        if (i == end) break;
     }
     console.log(dist.slice(1));
+    console.log("SHORTEST PATH from",start,"to",end,"=",dist[end]);
 
 }
 
-// startNode = 0;
-// endNode = 4;
+// start = 0;
+// end = 4;
 // adj = [
 //     [[1,5],[2,7]],
 //     [[0,5],[2,6],[3,3]],

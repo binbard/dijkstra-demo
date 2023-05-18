@@ -39,6 +39,10 @@
     cursor: text;
 }
 
+.colorEdge{
+    background-color: red;
+}
+
 .info {
     position: absolute;
     top: 20vh;
