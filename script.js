@@ -9,7 +9,7 @@ var dnode = null;
 var startNode = null;
 var endNode = null;
 var se = false;
-var bi = false;
+var bi = true;
 
 const svgContainer = document.querySelector('svg')
 
@@ -112,7 +112,7 @@ docWorld.addEventListener('click', function (e) {
 
 function selectStartEnd() {
     if (startNode != null && endNode != null) {
-        startNode.classList.remove('colorEdge');
+        startNode.classList.remove('colorEdgeBegin');
         endNode.classList.remove('colorEdge');
         startNode = null;
         endNode = null;
@@ -123,7 +123,7 @@ function selectStartEnd() {
 function handleSe(pt) {
     if (startNode === null) {
         startNode = pt;
-        startNode.classList.add('colorEdge')
+        startNode.classList.add('colorEdgeBegin')
         setMsg("START SELECTED")
     }
     else if (endNode === null) {
@@ -185,6 +185,31 @@ function addVertex(e) {
 }
 
 
+function colorEdge(u, v) {
+    let edge = document.getElementById("edge" + u + '-' + v);
+    if (edge === null) edge = document.getElementById("edge" + v + '-' + u);
+    if (edge === null) return;   // While testing, edge not exist
+    edge.style.stroke = "red";
+}
+
+function getEdgeOfVertices(u, v) {
+    let edge = 'edge' + u + '-' + v;
+    if (document.getElementById(edge) == null) {
+        edge = 'edge' + v + '-' + u;
+    }
+    return document.getElementById(edge);
+}
+
+function removeColorOfEdges() {
+    for (let edgeuv of edges) {
+        let u = edgeuv[0].id.slice(4);
+        let v = edgeuv[1].id.slice(4);
+        let edge = getEdgeOfVertices(u, v);
+        edge.classList.remove('colorEdge');
+        edge.style.stroke = "black";
+    }
+}
+
 class PriorityQueue {
     constructor() {
         this.queue = [];
@@ -204,22 +229,16 @@ class PriorityQueue {
     }
 }
 
-
-function colorEdge(u, v) {
-    let edge = document.getElementById("edge" + u + '-' + v);
-    if (edge === null) edge = document.getElementById("edge" + v + '-' + u);
-    if (edge === null) return;   // While testing, edge not exist
-    edge.style.stroke = "red";
-}
-
 function startDij() {
+    removeColorOfEdges();
+
     const pq = new PriorityQueue();
     const dist = new Array(adj.length).fill(Number.MAX_SAFE_INTEGER);
     const parent = new Array(adj.length).fill(-1);
 
     if (startNode == null) {
         start = 0;
-        end = dist.length-1;
+        end = dist.length - 1;
         console.info("Start End not set, setting to ", start, end);
     } else {
         start = parseInt(startNode.id.slice(4)) || 0;
@@ -229,7 +248,7 @@ function startDij() {
     dist[start] = 0;
     pq.push(0, start);
 
-    console.log(adj);
+    console.log({adj: adj});
 
     while (!pq.empty()) {
         const [_, u] = pq.pop();
@@ -241,13 +260,17 @@ function startDij() {
             }
         }
     }
-    for (let i = 1; i < adj.length; i++) {
-        console.log(parent[i], i, dist[i]);
-        colorEdge(parent[i], i);
-        if (i == end) break;
+    let path = [];
+    let x = end;
+    while (x != -1) {
+        path.push(x);
+        colorEdge(parent[x], x);
+        x = parent[x];
     }
-    console.log(dist.slice(1));
-    console.log("SHORTEST PATH from",start,"to",end,"=",dist[end]);
+
+    console.log(dist);
+    setMsg("SHORTEST PATH from " + start + " to " + end + "=<b>" +
+        dist[end] + "</b><br><b>" + path.reverse().join(" ➔ ") + "</b>");
 
 }
 

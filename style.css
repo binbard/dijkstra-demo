@@ -43,6 +43,10 @@
     background-color: red;
 }
 
+.colorEdgeBegin{
+    background-color: green;
+}
+
 .info {
     position: absolute;
     top: 20vh;
