@@ -1,16 +1,25 @@
+*{
+    font-family: 'Courier New', Courier, monospace;
+}
+
 .container {
     display: flex;
     justify-content: center;
 }
 
+.topic{
+    text-align: center;
+}
+
 .world {
-    border: 2px solid #2f59d8;
+    border: 2px solid #2e2f3e;
     width: 50vw;
     height: 80vh;
     position: relative;
+    background-color: #d0d1df;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 992px) {
     .world {
         border: 2px solid #2f59d8;
         width: 100vw;
@@ -55,7 +64,7 @@
 
 .edgeList {
     position: absolute;
-    top: 50vh;
+    top: 56vh;
     left: 80vw;
 }
 
@@ -68,6 +77,7 @@
     background-color: #2f59d8;
     color: #fff;
     cursor: pointer;
+    font-weight: bold;
 }
 
 @media screen and (max-width: 992px) {

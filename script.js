@@ -14,24 +14,27 @@ var bi = true;
 const svgContainer = document.querySelector('svg')
 
 const biCheck = document.querySelector('#biCheck');
-const fillRndCost = document.querySelector('#fillRndCost');
 const selectSe = document.querySelector('#selectSe');
 const btnDij = document.querySelector('#btnDij');
+const insec = document.querySelector('#insec');
 
 function setBi() {
     bi = !bi;
 }
 
 function setMsg(m) {
-    msg = "Selected: " + (snode !== null ? snode.id : null) + "<br>Destination: " + (dnode !== null ? dnode.id : null) + "<br><br>";
-    msg += "Start: " + (startNode !== null ? startNode.id : null) + "<br>End: " + (endNode !== null ? endNode.id : null) + "<br><br>";
+    msg = "<i>Selected:</i> " + (snode !== null ? snode.id : null) + "<br><i>Destination:</i> " + (dnode !== null ? dnode.id : null) + "<br><br>";
+    msg += "<i>Start:</i> " + (startNode !== null ? startNode.id : null) + "<br><i>End:</i> " + (endNode !== null ? endNode.id : null) + "<br><br>";
     docInfo.innerHTML = msg;
-    docInfo.appendChild(biCheck);
-    docInfo.appendChild(fillRndCost);
-    selectSe.innerHTML = "Start End";
-
-    docInfo.appendChild(selectSe);
-    docInfo.appendChild(btnDij);
+    // docInfo.appendChild(biCheck);
+    // docInfo.appendChild(biCheckLabel);
+    // docInfo.appendChild(fillRndCost);
+    // docInfo.appendChild(fillRndCostLabel);
+    // docInfo.innerHTML += "<br>";
+    // selectSe.innerHTML = "Start End";
+    // docInfo.appendChild(selectSe);
+    // docInfo.appendChild(btnDij);
+    docInfo.appendChild(insec);
 
     if (m) docInfo.innerHTML += "<br>" + m;
 }
