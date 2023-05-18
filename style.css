@@ -66,6 +66,12 @@
     position: absolute;
     top: 56vh;
     left: 80vw;
+    background-color: #d4d5dd;
+    padding: 10px;
+}
+
+.edgeList:empty{
+    display: none;
 }
 
 #selectSe{

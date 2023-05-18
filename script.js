@@ -26,17 +26,9 @@ function setMsg(m) {
     msg = "<i>Selected:</i> " + (snode !== null ? snode.id : null) + "<br><i>Destination:</i> " + (dnode !== null ? dnode.id : null) + "<br><br>";
     msg += "<i>Start:</i> " + (startNode !== null ? startNode.id : null) + "<br><i>End:</i> " + (endNode !== null ? endNode.id : null) + "<br><br>";
     docInfo.innerHTML = msg;
-    // docInfo.appendChild(biCheck);
-    // docInfo.appendChild(biCheckLabel);
-    // docInfo.appendChild(fillRndCost);
-    // docInfo.appendChild(fillRndCostLabel);
-    // docInfo.innerHTML += "<br>";
-    // selectSe.innerHTML = "Start End";
-    // docInfo.appendChild(selectSe);
-    // docInfo.appendChild(btnDij);
     docInfo.appendChild(insec);
 
-    if (m) docInfo.innerHTML += "<br>" + m;
+    if (m) docInfo.innerHTML += "<br> 🛈 " + m;
 }
 
 function addEdge() {
@@ -129,7 +121,7 @@ function handleSe(pt) {
     if (startNode === null) {
         startNode = pt;
         startNode.classList.add('colorEdgeBegin')
-        setMsg("START SELECTED")
+        setMsg("START SELECTED <br>(now select END)")
     }
     else if (endNode === null) {
         endNode = pt;
@@ -215,15 +207,15 @@ function removeColorOfEdges() {
     }
 }
 
-function fillRandomCost(){
-    for(let edgeuv of edges){
+function fillRandomCost() {
+    for (let edgeuv of edges) {
         let u = edgeuv[0].id.slice(4);
         let v = edgeuv[1].id.slice(4);
         let cost = Math.floor(Math.random() * 100);
         let edge = getEdgeOfVertices(u, v);
-        if(edge===null) continue;
+        if (edge === null) continue;
         edge.innerHTML = cost;
-        if(edge.classList.contains('bi')){
+        if (edge.classList.contains('bi')) {
             console.log("bi");
             editCost(v, u, cost);
         }
@@ -269,7 +261,7 @@ function startDij() {
     dist[start] = 0;
     pq.push(0, start);
 
-    console.log({adj: adj});
+    console.log({ adj: adj });
 
     while (!pq.empty()) {
         const [_, u] = pq.pop();
